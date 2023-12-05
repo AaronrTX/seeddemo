@@ -1,6 +1,9 @@
 package com.example.realtimedemo;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
+
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
@@ -13,7 +16,7 @@ import com.google.firebase.database.FirebaseDatabase;
 
 public class ProfileEditActivity extends AppCompatActivity {
     EditText editname, editemail, editUsername, editPassword;
-    Button saveButton;
+    Button saveButton, deleteButton;
     String nameUser, emailUser, usernameUser, passwordUser;
 
     DatabaseReference reference;
@@ -30,6 +33,7 @@ public class ProfileEditActivity extends AppCompatActivity {
         editUsername = findViewById(R.id.editUsername);
         editPassword = findViewById(R.id.editpassword);
         saveButton = findViewById(R.id.savebutton);
+        deleteButton = findViewById(R.id.deleteButton);
 
         showData();
 
@@ -38,10 +42,35 @@ public class ProfileEditActivity extends AppCompatActivity {
             public void onClick(View view) {
                 if(isNameChanges() || isEmailChanges() || isPasswordChanges()){
                     Toast.makeText(ProfileEditActivity.this, "Saved", Toast.LENGTH_LONG).show();
+                    Intent backtoProfile = new Intent(ProfileEditActivity.this, ProfileActivity.class);
+
+                    backtoProfile.putExtra("name",nameUser);
+                    backtoProfile.putExtra("email",emailUser);
+                    backtoProfile.putExtra("username",usernameUser);
+                    backtoProfile.putExtra("password",passwordUser);
+                    startActivity(backtoProfile);
+
+                    finish();
                 }
                 else{
                     Toast.makeText(ProfileEditActivity.this, "No Changes Were Made", Toast.LENGTH_LONG).show();
+                    Intent backtoProfile = new Intent(ProfileEditActivity.this, ProfileActivity.class);
+
+                    backtoProfile.putExtra("name",nameUser);
+                    backtoProfile.putExtra("email",emailUser);
+                    backtoProfile.putExtra("username",usernameUser);
+                    backtoProfile.putExtra("password",passwordUser);
+                    startActivity(backtoProfile);
+
+                    finish();
                 }
+            }
+        });
+
+        deleteButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showDeleteConfirmation();
             }
         });
 
@@ -97,5 +126,33 @@ public class ProfileEditActivity extends AppCompatActivity {
         editPassword.setText(passwordUser);
 
 
+    }
+    public void showDeleteConfirmation(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Delete Confirmation");
+        builder.setMessage("Are you sure you want to delete your profile");
+        builder.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                deleteUser();
+            }
+        });
+        builder.setNegativeButton("No", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.show();
+
+    }
+
+    private void deleteUser(){
+        reference.child(usernameUser).removeValue();
+
+        Intent intent = new Intent(ProfileEditActivity.this, LoginActivity.class);
+        startActivity(intent);
+
+        finish();
     }
 }
