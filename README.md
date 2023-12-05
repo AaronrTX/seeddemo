@@ -33,6 +33,5 @@ Go to Gradie Scripts - build.gradle.kts (Module :app) Go to compileSdk and chang
 //Files that i have updated is 
 colors.xml
 ProfileEditActivity
-ProfileActivity
 SignupActivity
 activity_profile_edit.xml
